@@ -201,6 +201,10 @@ toolchain. Getting them to compile and pass was mostly mechanical:
   nothing built or tested them. The tree targets Linux and other POSIX systems
   only, and there are no longer any `#ifdef _WIN32` branches to keep in step
   with the code they guard.
+- `MAXDOUBLE` and `MAXINT` come from `compat/mxtree_limits.h` rather than
+  `<values.h>`, which declares itself obsolete in favour of `<float.h>` and
+  `<limits.h>` and is only a set of aliases for them. The sources keep the old
+  spellings, so nothing but the include changed.
 
 Two real bugs surfaced once the tests could run, both fixed:
 

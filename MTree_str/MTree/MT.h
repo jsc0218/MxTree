@@ -27,7 +27,7 @@
 #include "MTfile.h"
 #include "MTnode.h"
 #include "MTcursor.h"
-#include <values.h>
+#include "mxtree_limits.h"
 
 typedef enum {
     RANDOM = 0,

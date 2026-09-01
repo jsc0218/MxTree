@@ -3,9 +3,7 @@
 
 #include <string.h>
 #include <stdio.h>
-#ifndef MAXDOUBLE
-#include <values.h>
-#endif
+#include "mxtree_limits.h"
 #include "GiST.h"
 #include "MTobject.h"
 
