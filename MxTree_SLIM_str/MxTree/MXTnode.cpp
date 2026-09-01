@@ -84,7 +84,7 @@ void MXTnode::Pack(char *buffer) const
 		memcpy(buffer+ltptr+compressedEntry.keyLen, &compressedEntry.ptr, sizeof(GiSTpage));
 		// Be tidy
 		if (compressedEntry.key) {
-			delete compressedEntry.key;
+			delete [] compressedEntry.key;
 		}
 		// Enter a pointer to the entry in the line table
 		ltptr += compressedEntry.keyLen + sizeof(GiSTpage);
@@ -115,7 +115,7 @@ void MXTnode::Unpack(const char *buffer)
 		e->Decompress(tmpentry);
 		// be tidy
 		if (tmpentry.key) {
-			delete tmpentry.key;
+			delete [] tmpentry.key;
 		}
 		// Append the body with the entry
 		entries[i] = e;

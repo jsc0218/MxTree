@@ -24,14 +24,7 @@
 #ifndef MTCURSOR_H
 #define MTCURSOR_H
 
-#ifndef MAXDOUBLE
-#ifdef _WIN32  // for MAXDOUBLE
-#include <float.h>
-#define MAXDOUBLE DBL_MAX
-#else
-#include <values.h>
-#endif
-#endif
+#include "mxtree_limits.h"
 #include "GiST.h"
 #include "MTlist.h"
 

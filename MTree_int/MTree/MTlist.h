@@ -101,7 +101,7 @@ public:
 		if (temp) {
 			InsertBefore (temp, entry);
 		} else {
-			Append (entry);
+			this->Append (entry);
 		}
 	}
 

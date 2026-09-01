@@ -27,15 +27,7 @@
 #include "MTfile.h"
 #include "MTnode.h"
 #include "MTcursor.h"
-#ifdef _WIN32  // for MAXDOUBLE
-#include <float.h>
-#include <limits.h>
-#define MAXDOUBLE DBL_MAX
-#define MINDOUBLE DBL_MIN
-#define MAXINT INT_MAX
-#else  // under UNIX these constants are defined in values.h
-#include <values.h>
-#endif
+#include "mxtree_limits.h"
 
 typedef enum {
     RANDOM = 0,

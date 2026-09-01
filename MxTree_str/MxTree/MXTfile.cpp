@@ -1,7 +1,7 @@
+#include <string.h>
+#include "mxtree_platform.h"
 #include "MXTfile.h"
 #include <fcntl.h>
-#include <io.h>
-#include <sys\stat.h>
 
 extern int IOread, IOwrite;
 
@@ -10,12 +10,12 @@ void MXTfile::Create(const char *filename)
 	if (IsOpen()) {
 		return;
 	}
-	fileHandle = open(filename, O_RDWR|O_BINARY);
+	fileHandle = open(filename, O_RDWR);
 	if (fileHandle >= 0) {
 		close(fileHandle);
 		return;
 	}
-	fileHandle = open(filename, O_BINARY|O_RDWR|O_CREAT|O_TRUNC, S_IREAD|S_IWRITE);
+	fileHandle = open(filename, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
 	if (fileHandle < 0) {
 		return;
 	}
@@ -27,7 +27,7 @@ void MXTfile::Open(const char *filename)
 	if (IsOpen()) {
 		return;
 	}
-	fileHandle = open(filename, O_RDWR|O_BINARY);
+	fileHandle = open(filename, O_RDWR);
 	if (fileHandle < 0) {
 		return;
 	}

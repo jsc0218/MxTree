@@ -1,9 +1,9 @@
+#include <string.h>
+#include "mxtree_platform.h"
 #include <string>
 using namespace std;
 #include "BitMap.h"
-#include <io.h>
 #include <fcntl.h>
-#include <sys\stat.h>
 #include <math.h>
 #include <assert.h>
 
@@ -12,7 +12,7 @@ const int BITS_PER_CHAR = 8;
 
 BitMap::BitMap()
 {
-	fileHandle = open(BitMapPath.c_str(), O_BINARY|O_RDWR|O_CREAT, S_IREAD|S_IWRITE);
+	fileHandle = open(BitMapPath.c_str(), O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
 	assert(fileHandle != -1);
 	len = filelength(fileHandle);
 	map = new char[len];

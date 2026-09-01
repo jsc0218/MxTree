@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  drivers:
+    name: driver copies in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/check_drivers.sh
+
+  build_and_test:
+    # Every variant is a separate program with its own copy of the sources, so
+    # a break in one says nothing about the others. Run them as separate jobs
+    # and let them all report.
+    name: ${{ matrix.variant }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        variant:
+          - MTree
+          - MTree_int
+          - MTree_str
+          - MxTree
+          - MxTree_int
+          - MxTree_str
+          - MxTree_SLIM
+          - MxTree_SLIM_str
+          - MxTree_SPLIT
+          - MxTree_SPLIT_str
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --target ${{ matrix.variant }} -j"$(nproc)"
+
+      - name: Happy path
+        run: tests/happy_path.sh ${{ matrix.variant }} build
+
+  sanitizers:
+    # The same happy path under AddressSanitizer and UndefinedBehaviorSanitizer.
+    # Both of the memory bugs fixed when this suite was written were invisible
+    # in a plain build and obvious here, so it is worth the extra minutes.
+    name: sanitizers (${{ matrix.variant }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [MTree_str, MxTree, MxTree_int, MxTree_str]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g -O1"
+          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+
+      - name: Build
+        run: cmake --build build --target ${{ matrix.variant }} -j"$(nproc)"
+
+      - name: Happy path
+        env:
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+        run: tests/happy_path.sh ${{ matrix.variant }} build

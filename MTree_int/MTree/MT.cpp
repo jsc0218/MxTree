@@ -24,10 +24,6 @@
 #include "MT.h"
 #include "MTpredicate.h"
 
-#ifdef _WIN32	// these functions are defined under UNIX
-void srandom (int seed) { srand(seed); }
-int random() { return rand(); }
-#endif
 
 TruePredicate truePredicate;
 
@@ -140,7 +136,9 @@ MT::RangeSearch (const MTquery& query, int *pages)
 MTentry **
 MT::TopSearch (const TopQuery& query)
 {
-	MTentry **results = new MTentry*[query.k];  // the results list (ordered for increasing distances)
+	// Value initialised: a search that finds fewer than k objects leaves the
+	// tail of this array untouched, and the caller has to be able to tell.
+	MTentry **results = new MTentry*[query.k]();  // the results list (ordered for increasing distances)
 	double *dists = new double[query.k];  // array containing the KNN distances
 	for (int i=0; i<query.k; i++) {
 		dists[i] = MaxDist ();  // initialization of the KNN-distances array
@@ -158,24 +156,31 @@ MT::TopSearch (const TopQuery& query)
 			MTentry *entry = (MTentry *) ((*node)[i].Ptr());
 			if (simQuery.Consistent (*entry)) {
 				if (entry->IsLeaf()) {
-					if (dists[query.k-1] < MaxDist()) {
-						delete results[query.k-1];  // delete last element of the results list
-					}
-					MTentry *newEntry = (MTentry *) entry->Copy ();
-					newEntry->SetMinRadius(0);
-					newEntry->SetMaxRadius(simQuery.Grade());  // insert the actual distance from the query object as the key radius
-					// insert dist in the results list (sorting for incr. distance), which could be improved using binary search
+					// Find the insertion point before touching the array. Consistent
+					// admits an object whose distance ties with the current kth, and
+					// such an object compares equal to every slot, so an unbounded
+					// scan walks off the end. A tie means the object is no better
+					// than the kth already held, so there is nothing to insert.
+					// Integer valued metrics such as edit distance tie constantly.
 					int j = 0;
-					while (dists[j] <= simQuery.Grade()) {
+					while (j < query.k && dists[j] <= simQuery.Grade()) {
 						j++;
 					}
-					for (int i=query.k-1; i>j; i--) {  // shift up results array
-						results[i] = results[i-1];
-						dists[i] = dists[i-1];
+					if (j < query.k) {
+						if (dists[query.k-1] < MaxDist()) {
+							delete results[query.k-1];  // delete last element of the results list
+						}
+						MTentry *newEntry = (MTentry *) entry->Copy ();
+						newEntry->SetMinRadius(0);
+						newEntry->SetMaxRadius(simQuery.Grade());  // insert the actual distance from the query object as the key radius
+						for (int i=query.k-1; i>j; i--) {  // shift up results array
+							results[i] = results[i-1];
+							dists[i] = dists[i-1];
+						}
+						results[j] = newEntry;
+						dists[j] = simQuery.Grade ();
+						simQuery.SetRadius (dists[query.k-1]);
 					}
-					results[j] = newEntry;
-					dists[j] = simQuery.Grade ();
-					simQuery.SetRadius (dists[query.k-1]);
 				} else {  // insert the child node in the priority queue
 					double bound = simQuery.Grade () - entry->MaxRadius();  // these are lower-bounds on the distances of the descendants of the entry from the query object
 					bound = bound<0 ? 0 : bound;

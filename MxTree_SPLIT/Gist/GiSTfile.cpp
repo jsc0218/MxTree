@@ -1,17 +1,10 @@
+#include "mxtree_platform.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
-#ifdef UNIX
 #include <unistd.h>
-#else
-#include <io.h>
-#endif
-
-#ifdef UNIX
-#define O_BINARY 0
-#endif
 
 #include "GiSTfile.h"
 
@@ -25,12 +18,12 @@ GiSTfile::Create (const char *filename)
 	if (IsOpen()) {
 		return;
 	}
-	fileHandle = open (filename, O_RDWR|O_BINARY);  // expect to -1
+	fileHandle = open (filename, O_RDWR);  // expect to -1
 	if (fileHandle >= 0) {  // already have one
 		close (fileHandle);
 		return;
 	}
-	fileHandle = open (filename, O_BINARY|O_RDWR|O_CREAT|O_TRUNC, S_IREAD|S_IWRITE);
+	fileHandle = open (filename, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
 	if (fileHandle < 0) {  // error
 		return;
 	}
@@ -51,7 +44,7 @@ GiSTfile::Open (const char *filename)
 	if (IsOpen()) {
 		return;
 	}
-	fileHandle = open(filename, O_RDWR|O_BINARY);
+	fileHandle = open(filename, O_RDWR);
 	if (fileHandle < 0) {  // error
 		return;
 	}
