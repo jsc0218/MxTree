@@ -1,3 +1,4 @@
+#include "mxtree_platform.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -6,7 +7,6 @@
 #ifdef UNIX
 #include <unistd.h>
 #else
-#include <io.h>
 #endif
 
 #ifdef UNIX

@@ -5,6 +5,7 @@
 // Copyright (c) 1996, Regents of the University of California
 // $Header: /usr/local/devel/GiST/libGiST/libGiST/GiSTfile.cpp,v 1.1.1.1 1996/08/06 23:47:21 jmh Exp $
 
+#include "mxtree_platform.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -13,7 +14,6 @@
 #ifdef UNIX
 #include <unistd.h>
 #else
-#include <io.h>
 #endif
 
 #ifdef UNIX

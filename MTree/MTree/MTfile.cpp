@@ -21,13 +21,12 @@
 *                                                                    *
 *********************************************************************/
 
+#include "mxtree_platform.h"
 #include <fcntl.h>
 #include <string.h>
 #ifdef UNIX
 #include <unistd.h>
 #else
-#include <io.h>
-#include <sys\stat.h>
 #include <stdio.h>
 #endif
 

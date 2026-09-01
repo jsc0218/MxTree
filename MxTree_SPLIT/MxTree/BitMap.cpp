@@ -1,9 +1,9 @@
+#include <string.h>
+#include "mxtree_platform.h"
 #include <string>
 using namespace std;
 #include "BitMap.h"
-#include <io.h>
 #include <fcntl.h>
-#include <sys\stat.h>
 #include <math.h>
 #include <assert.h>
 

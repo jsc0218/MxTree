@@ -1,7 +1,7 @@
+#include <string.h>
+#include "mxtree_platform.h"
 #include "MXTfile.h"
 #include <fcntl.h>
-#include <io.h>
-#include <sys\stat.h>
 
 extern int IOread, IOwrite;
 
