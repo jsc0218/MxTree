@@ -4,13 +4,7 @@
 #include "MTfile.h"
 #include "MTnode.h"
 #include "MTcursor.h"
-#ifdef _WIN32  // for MAXDOUBLE
-#include <float.h>
-#include <limits.h>
-#define MAXDOUBLE DBL_MAX
-#else  // under UNIX these constants are defined in values.h
 #include <values.h>
-#endif
 
 typedef enum {
     RANDOM = 0,

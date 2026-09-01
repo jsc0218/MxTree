@@ -2,10 +2,6 @@
 #include "MTpredicate.h"
 #include "MXTnode.h"
 
-#ifdef _WIN32	// these functions are defined under UNIX
-void srandom (int seed) { srand(seed); }
-int random() { return rand(); }
-#endif
 
 TruePredicate truePredicate;
 

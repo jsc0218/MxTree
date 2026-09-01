@@ -10,12 +10,12 @@ void MXTfile::Create(const char *filename)
 	if (IsOpen()) {
 		return;
 	}
-	fileHandle = open(filename, O_RDWR|O_BINARY);
+	fileHandle = open(filename, O_RDWR);
 	if (fileHandle >= 0) {
 		close(fileHandle);
 		return;
 	}
-	fileHandle = open(filename, O_BINARY|O_RDWR|O_CREAT|O_TRUNC, S_IREAD|S_IWRITE);
+	fileHandle = open(filename, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
 	if (fileHandle < 0) {
 		return;
 	}
@@ -27,7 +27,7 @@ void MXTfile::Open(const char *filename)
 	if (IsOpen()) {
 		return;
 	}
-	fileHandle = open(filename, O_RDWR|O_BINARY);
+	fileHandle = open(filename, O_RDWR);
 	if (fileHandle < 0) {
 		return;
 	}
@@ -46,7 +46,7 @@ void MXTfile::Close()
 void MXTfile::Read(GiSTpage page, char *buf)
 {
 	if (IsOpen()) {
-		_lseeki64(fileHandle, page*PageSize(), SEEK_SET);
+		lseek(fileHandle, page*PageSize(), SEEK_SET);
 		read(fileHandle, buf, PageSize());
 		IOread++;
 	}
@@ -55,7 +55,7 @@ void MXTfile::Read(GiSTpage page, char *buf)
 void MXTfile::Write(GiSTpage page, const char *buf)
 {
 	if (IsOpen()) {
-		_lseeki64(fileHandle, page*PageSize(), SEEK_SET);
+		lseek(fileHandle, page*PageSize(), SEEK_SET);
 		write(fileHandle, buf, PageSize());
 		IOwrite++;
 	}
@@ -68,7 +68,7 @@ GiSTpage MXTfile::Allocate()
 	GiSTpage page = bitMap->Allocate();
 	char *buf = new char[PageSize()];
 	memset(buf, 0, PageSize());
-	_lseeki64(fileHandle, page*PageSize(), SEEK_SET);
+	lseek(fileHandle, page*PageSize(), SEEK_SET);
 	write(fileHandle, buf, PageSize());
 	delete[] buf;
 	return page;
@@ -85,7 +85,7 @@ void MXTfile::Read(GiSTpage page, char *buf, int pageNum)
 {
 	assert(pageNum >= 1);
 	if (IsOpen()) {
-		_lseeki64(fileHandle, page*PageSize(), SEEK_SET);
+		lseek(fileHandle, page*PageSize(), SEEK_SET);
 		read(fileHandle, buf, pageNum*PageSize());
 		IOread += pageNum;
 	}
@@ -95,7 +95,7 @@ void MXTfile::Write(GiSTpage page, const char *buf, int pageNum)
 {
 	assert(pageNum >= 1);
 	if (IsOpen()) {
-		_lseeki64(fileHandle, page*PageSize(), SEEK_SET);
+		lseek(fileHandle, page*PageSize(), SEEK_SET);
 		write(fileHandle, buf, pageNum*PageSize());
 		IOwrite += pageNum;
 	}
@@ -109,7 +109,7 @@ GiSTpage MXTfile::Allocate(int pageNum)
 	GiSTpage page = bitMap->Allocate(pageNum);
 	char *buf = new char[PageSize()];
 	memset(buf, 0, PageSize());
-	_lseeki64(fileHandle, page*PageSize(), SEEK_SET);
+	lseek(fileHandle, page*PageSize(), SEEK_SET);
 	for (int i=0; i<pageNum; i++) {
 		write(fileHandle, buf, PageSize());
 	}

@@ -21,9 +21,7 @@
 *                                                                    *
 *********************************************************************/
 
-#ifdef UNIX
 #include <unistd.h>
-#endif
 #include "MT.h"
 
 extern double MIN_UTIL;

@@ -91,7 +91,8 @@ genuinely useful thing to build. This repository is the algorithm half of it.
 
 ## Quick start
 
-Requires CMake 3.16+, a C++17 compiler and Python 3 for the test data.
+Builds on Linux and other POSIX systems. Requires CMake 3.16+, a C++17 compiler
+and Python 3 for the test data.
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -186,14 +187,20 @@ AddressSanitizer and UndefinedBehaviorSanitizer.
 The sources were written for Visual Studio and had not been built on a POSIX
 toolchain. Getting them to compile and pass was mostly mechanical:
 
-- The MSVC C runtime calls (`<io.h>`, `filelength`, `_lseeki64`,
-  `S_IREAD`/`S_IWRITE`, `O_BINARY`) are mapped onto POSIX in
-  `compat/mxtree_platform.h` rather than edited into every call site.
+- The MSVC C runtime calls now use their POSIX spellings directly: `O_BINARY`
+  is dropped, `_lseeki64` is `lseek`, `S_IREAD`/`S_IWRITE` are
+  `S_IRUSR`/`S_IWUSR`. Only `filelength` has no POSIX equivalent, so
+  `compat/mxtree_platform.h` keeps a small `lseek`-based version of it.
 - `MTorderedlist<T>` called a base-class member unqualified, which older MSVC
   accepted and two-phase name lookup does not.
 - The original `Makefile`s were the 1997 Bologna ones: they indent recipes with
   spaces, and link a prebuilt `$(HOME)/GiST/libGiST.a` that is not in the
   repository. They are replaced by `CMakeLists.txt`.
+- The `.sln` and `.vcproj` files are gone. They only ever added `..\Gist` to the
+  include path, so they could not have found the compatibility header, and
+  nothing built or tested them. The tree targets Linux and other POSIX systems
+  only, and there are no longer any `#ifdef _WIN32` branches to keep in step
+  with the code they guard.
 
 Two real bugs surfaced once the tests could run, both fixed:
 

@@ -43,11 +43,11 @@ foreach(variant ${MXTREE_VARIANTS})
       "${CMAKE_CURRENT_SOURCE_DIR}/${variant}/Gist"
       "${CMAKE_CURRENT_SOURCE_DIR}/${variant}/${family}")
 
-  # UNIX and PRINTING_OBJECTS are the switches the original Bologna makefile
-  # set. _FILE_OFFSET_BITS keeps off_t 64 bit on 32 bit hosts, which the
-  # storage layer assumes when it seeks by page number.
+  # PRINTING_OBJECTS is one of the switches the original Bologna makefile set;
+  # its UNIX companion is gone now that there is only one platform.
+  # _FILE_OFFSET_BITS keeps off_t 64 bit on 32 bit hosts, which the storage
+  # layer assumes when it seeks by page number.
   target_compile_definitions(${variant} PRIVATE
-      UNIX
       PRINTING_OBJECTS
       _FILE_OFFSET_BITS=64)
 endforeach()

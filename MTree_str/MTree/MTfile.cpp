@@ -24,15 +24,7 @@
 #include "mxtree_platform.h"
 #include <fcntl.h>
 #include <string.h>
-#ifdef UNIX
 #include <unistd.h>
-#else
-#include <stdio.h>
-#endif
-
-#ifdef UNIX
-#define O_BINARY 0
-#endif
 
 #include "MTfile.h"
 
@@ -47,12 +39,12 @@ MTfile::Create (const char *filename)
 	if (IsOpen()) {
 		return;
 	}
-	fileHandle = open (filename, O_RDWR|O_BINARY);
+	fileHandle = open (filename, O_RDWR);
 	if (fileHandle >= 0) {
 		close (fileHandle);
 		return;
 	}
-	fileHandle = open (filename, O_BINARY|O_RDWR|O_CREAT|O_TRUNC, S_IREAD|S_IWRITE);
+	fileHandle = open (filename, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
 	if (fileHandle < 0) {
 		return;
 	}
@@ -72,7 +64,7 @@ MTfile::Open (const char *filename)
 	if (IsOpen()) {
 		return;
 	}
-	fileHandle = open (filename, O_RDWR|O_BINARY);
+	fileHandle = open (filename, O_RDWR);
 	if (fileHandle < 0) {
 		return;
 	}
